@@ -192,9 +192,13 @@ int imu_read_accel(int16_t *accel_data) {
         return -1;
     }
 
+    if (imu_check_data_ready_flag() != 1) {
+        return -2;
+    }
+
     uint8_t raw_data[6];
     if (imu_read_multiple_registers(IMU_REG_ACCEL_DATA, raw_data, 6) != 0) {
-        return -2;
+        return -3;
     }
 
     accel_data[0] = (raw_data[0] << 8) | raw_data[1];    // X axis
@@ -209,15 +213,33 @@ int imu_read_gyro(int16_t *gyro_data) {
         return -1;
     }
 
+    if (imu_check_data_ready_flag() != 1) {
+        return -2;
+    }
+
     uint8_t raw_data[6];
     if (imu_read_multiple_registers(IMU_REG_GYRO_DATA, raw_data, 6) != 0) {
-        return -2;
+        return -3;
     }
 
     gyro_data[0] = (raw_data[0] << 8) | raw_data[1];    // X axis
     gyro_data[1] = (raw_data[2] << 8) | raw_data[3];    // Y axis
     gyro_data[2] = (raw_data[4] << 8) | raw_data[5];    // Z axis
     
+    return 0;
+}
+
+int imu_check_data_ready_flag(void) {
+    uint8_t status;
+
+    if (imu_read_register(IMU_REG_INT_STATUS, &status) != 0) {
+        return -1;
+    }
+
+    if (status & 0x01) {
+        return 1;
+    }
+
     return 0;
 }
 

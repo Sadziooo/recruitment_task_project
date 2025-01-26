@@ -112,14 +112,18 @@ typedef struct {
 int imu_init(IMU_Interface *i2c, uint8_t accel_mode, uint8_t gyro_mode, uint8_t idle, uint8_t accel_lp_clk_sel);
 int imu_config_accel(uint8_t range, uint8_t freq);
 int imu_config_gyro(uint8_t range, uint8_t freq);
+
 int imu_start_acquisition_default(void);
 int imu_stop_acquisition_default(void);
 int imu_start_acquisition_accel(uint8_t mode);
 int imu_start_acquisition_gyro(uint8_t mode);
 int imu_stop_acquisition_accel(void);
 int imu_stop_acquisition_gyro(void);
+
+int imu_check_data_ready_flag(void);
 int imu_read_accel(int16_t *accel_data);
 int imu_read_gyro(int16_t *gyro_data);
+
 int imu_write_register(uint8_t reg_addr, uint8_t value);
 int imu_read_register(uint8_t reg_addr, uint8_t *value);
 int imu_read_multiple_registers(uint8_t reg_addr, uint8_t *value, uint16_t len);
