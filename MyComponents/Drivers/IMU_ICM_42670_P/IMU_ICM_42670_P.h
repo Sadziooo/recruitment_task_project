@@ -33,10 +33,10 @@
 #define IMU_REG_ACCEL_CONFIG0 	    0x21
 
 // ACCEL_UI_FS_SEL (Full scale select for accelerometer UI interface output)
-#define ACCEL_UI_FS_SEL_16g     0b00
-#define ACCEL_UI_FS_SEL_8g      0b01
-#define ACCEL_UI_FS_SEL_4g      0b10
-#define ACCEL_UI_FS_SEL_2g      0b11
+#define IMU_ACCEL_UI_FS_SEL_16g     0b00
+#define IMU_ACCEL_UI_FS_SEL_8g      0b01
+#define IMU_ACCEL_UI_FS_SEL_4g      0b10
+#define IMU_ACCEL_UI_FS_SEL_2g      0b11
 
 // ACCEL_ODR (Accelerometer ODR selection for UI interface output)
 #define IMU_ACCEL_ODR_RESERVED_0000     0b0000  // Reserved
@@ -60,28 +60,28 @@
 #define IMU_REG_GYRO_CONFIG0  		0x20
 
 // GYRO_UI_FS_SEL (Full scale select for gyroscope UI interface output)
-#define GYRO_FS_2000DPS  0b00
-#define GYRO_FS_1000DPS  0b01
-#define GYRO_FS_500DPS   0b10
-#define GYRO_FS_250DPS   0b11
+#define IMU_GYRO_FS_2000DPS  0b00
+#define IMU_GYRO_FS_1000DPS  0b01
+#define IMU_GYRO_FS_500DPS   0b10
+#define IMU_GYRO_FS_250DPS   0b11
 
 // GYRO_ODR (Gyroscope ODR selection for UI interface output)
-#define GYRO_ODR_RESERVED_0000  0b0000  // Reserved
-#define GYRO_ODR_RESERVED_0001  0b0001  // Reserved
-#define GYRO_ODR_RESERVED_0010  0b0010  // Reserved
-#define GYRO_ODR_RESERVED_0011  0b0011  // Reserved
-#define GYRO_ODR_RESERVED_0100  0b0100  // Reserved
-#define GYRO_ODR_1_6KHZ         0b0101  // 1.6 kHz
-#define GYRO_ODR_800HZ          0b0110  // 800 Hz
-#define GYRO_ODR_400HZ          0b0111  // 400 Hz
-#define GYRO_ODR_200HZ          0b1000  // 200 Hz
-#define GYRO_ODR_100HZ          0b1001  // 100 Hz
-#define GYRO_ODR_50HZ           0b1010  // 50 Hz
-#define GYRO_ODR_25HZ           0b1011  // 25 Hz
-#define GYRO_ODR_12_5HZ         0b1100  // 12.5 Hz
-#define GYRO_ODR_RESERVED_1101  0b1101  // Reserved
-#define GYRO_ODR_RESERVED_1110  0b1110  // Reserved
-#define GYRO_ODR_RESERVED_1111  0b1111  // Reserved 
+#define IMU_GYRO_ODR_RESERVED_0000  0b0000  // Reserved
+#define IMU_GYRO_ODR_RESERVED_0001  0b0001  // Reserved
+#define IMU_GYRO_ODR_RESERVED_0010  0b0010  // Reserved
+#define IMU_GYRO_ODR_RESERVED_0011  0b0011  // Reserved
+#define IMU_GYRO_ODR_RESERVED_0100  0b0100  // Reserved
+#define IMU_GYRO_ODR_1_6KHZ         0b0101  // 1.6 kHz
+#define IMU_GYRO_ODR_800HZ          0b0110  // 800 Hz
+#define IMU_GYRO_ODR_400HZ          0b0111  // 400 Hz
+#define IMU_GYRO_ODR_200HZ          0b1000  // 200 Hz
+#define IMU_GYRO_ODR_100HZ          0b1001  // 100 Hz
+#define IMU_GYRO_ODR_50HZ           0b1010  // 50 Hz
+#define IMU_GYRO_ODR_25HZ           0b1011  // 25 Hz
+#define IMU_GYRO_ODR_12_5HZ         0b1100  // 12.5 Hz
+#define IMU_GYRO_ODR_RESERVED_1101  0b1101  // Reserved
+#define IMU_GYRO_ODR_RESERVED_1110  0b1110  // Reserved
+#define IMU_GYRO_ODR_RESERVED_1111  0b1111  // Reserved
 
 #define IMU_REG_ACCEL_DATA    		0x0B
 #define IMU_REG_GYRO_DATA     		0x11
@@ -90,18 +90,26 @@
 // TYPEDEFS ---------------------------------------------------------------------------------------------------------------------------------
 
 typedef struct {
-    int (*write)(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, uint16_t len);
-    int (*read)(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, uint16_t len);
-} IMU_Interface;
+    int (*write_imu)(uint16_t dev_addr, uint16_t reg_addr, uint8_t *data, uint16_t len);
+    int (*read_imu)(uint16_t dev_addr, uint16_t reg_addr, uint8_t *data, uint16_t len);
+} IMU_Interface_i;
 
 typedef struct {
     int16_t accel_x;
     int16_t accel_y;
     int16_t accel_z;
-    int16_t gyro_x;
-    int16_t gyro_y;
-    int16_t gyro_z;
-} IMU_Data;
+} accel_data_t;
+
+typedef struct {
+	int16_t gyro_x;
+	int16_t gyro_y;
+	int16_t gyro_z;
+} gyro_data_t;
+
+typedef struct {
+	accel_data_t accel_data;
+	gyro_data_t gyro_data;
+} IMU_Data_t;
 
 // VARIABLES --------------------------------------------------------------------------------------------------------------------------------
 
@@ -109,7 +117,7 @@ typedef struct {
 
 // FUNCTION PROTOTYPES ---------------------------------------------------------------------------------------------------------------
 
-int imu_init(IMU_Interface *i2c, uint8_t accel_mode, uint8_t gyro_mode, uint8_t idle, uint8_t accel_lp_clk_sel);
+int imu_init(IMU_Interface_i *i2c, uint8_t accel_mode, uint8_t gyro_mode, uint8_t idle, uint8_t accel_lp_clk_sel);
 int imu_config_accel(uint8_t range, uint8_t freq);
 int imu_config_gyro(uint8_t range, uint8_t freq);
 
@@ -124,9 +132,9 @@ int imu_check_data_ready_flag(void);
 int imu_read_accel(int16_t *accel_data);
 int imu_read_gyro(int16_t *gyro_data);
 
-int imu_write_register(uint8_t reg_addr, uint8_t value);
-int imu_read_register(uint8_t reg_addr, uint8_t *value);
-int imu_read_multiple_registers(uint8_t reg_addr, uint8_t *value, uint16_t len);
+int imu_write_register(uint16_t reg_addr, uint8_t value);
+int imu_read_register(uint16_t reg_addr, uint8_t *value);
+int imu_read_multiple_registers(uint16_t reg_addr, uint8_t *value, uint16_t len);
 void imu_debug_registers(void);
 
 

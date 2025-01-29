@@ -21,19 +21,19 @@
 
 // VARIABLES --------------------------------------------------------------------------------------------------------------------------------
 
-static IMU_Interface *i2c_interface = NULL;
+static IMU_Interface_i *imu_interface = NULL;
 
 // FUNCTION PROTOTYPES ---------------------------------------------------------------------------------------------------------------
 
 
 // FUNCTIONS --------------------------------------------------------------------------------------------------------------------------------
 
-int imu_init(IMU_Interface *i2c, uint8_t accel_mode, uint8_t gyro_mode, uint8_t idle, uint8_t accel_lp_clk_sel) {
+int imu_init(IMU_Interface_i *i2c, uint8_t accel_mode, uint8_t gyro_mode, uint8_t idle, uint8_t accel_lp_clk_sel) {
 	if (i2c == NULL) {
 		return -1;
 	}
 
-	i2c_interface = i2c;
+	imu_interface = i2c;
     uint8_t reserved = 0b00; // 
 
     if (accel_mode > 0b11) {
@@ -243,16 +243,16 @@ int imu_check_data_ready_flag(void) {
     return 0;
 }
 
-int imu_write_register(uint8_t reg_addr, uint8_t value) {
-    return i2c_interface->write(IMU_I2C_ADDRESS, reg_addr, &value, 1);
+int imu_write_register(uint16_t reg_addr, uint8_t value) {
+    return imu_interface->write_imu(IMU_I2C_ADDRESS, reg_addr, &value, 1);
 }
 
-int imu_read_register(uint8_t reg_addr, uint8_t *value) {
-    return i2c_interface->read(IMU_I2C_ADDRESS, reg_addr, value, 1);
+int imu_read_register(uint16_t reg_addr, uint8_t *value) {
+    return imu_interface->read_imu(IMU_I2C_ADDRESS, reg_addr, value, 1);
 }
 
-int imu_read_multiple_registers(uint8_t reg_addr, uint8_t *value, uint16_t len) {
-    return i2c_interface->read(IMU_I2C_ADDRESS, reg_addr, value, len);
+int imu_read_multiple_registers(uint16_t reg_addr, uint8_t *value, uint16_t len) {
+    return imu_interface->read_imu(IMU_I2C_ADDRESS, reg_addr, value, len);
 }
 
 void imu_debug_registers(void) {

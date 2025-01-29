@@ -30,6 +30,8 @@
 
 /* USER CODE BEGIN 0 */
 
+#include <stdbool.h>
+
 /* USER CODE END 0 */
 /* Private function prototypes -----------------------------------------------*/
 static void ethernet_link_status_updated(struct netif *netif);
@@ -49,11 +51,13 @@ uint8_t IP_ADDRESS[4];
 uint8_t NETMASK_ADDRESS[4];
 uint8_t GATEWAY_ADDRESS[4];
 /* USER CODE BEGIN OS_THREAD_ATTR_CMSIS_RTOS_V2 */
-#define INTERFACE_THREAD_STACK_SIZE ( 1024 )
+#define INTERFACE_THREAD_STACK_SIZE ( 2048 )
 osThreadAttr_t attributes;
 /* USER CODE END OS_THREAD_ATTR_CMSIS_RTOS_V2 */
 
 /* USER CODE BEGIN 2 */
+
+volatile bool lwip_is_ready_flag = false;
 
 /* USER CODE END 2 */
 
@@ -109,7 +113,9 @@ void MX_LWIP_Init(void)
 /* USER CODE END H7_OS_THREAD_NEW_CMSIS_RTOS_V2 */
 
 /* USER CODE BEGIN 3 */
+  osDelay(1000);
 
+  ethernet_link_status_updated(&gnetif);
 /* USER CODE END 3 */
 }
 
@@ -130,11 +136,13 @@ static void ethernet_link_status_updated(struct netif *netif)
   if (netif_is_up(netif))
   {
 /* USER CODE BEGIN 5 */
+	  lwip_is_ready_flag = true;
 /* USER CODE END 5 */
   }
   else /* netif is down */
   {
 /* USER CODE BEGIN 6 */
+	  lwip_is_ready_flag = false;
 /* USER CODE END 6 */
   }
 }
