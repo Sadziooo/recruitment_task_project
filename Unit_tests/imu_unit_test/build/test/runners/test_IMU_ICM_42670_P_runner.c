@@ -128,15 +128,15 @@ static void run_test(UnityTestFunction func, const char* name, UNITY_LINE_TYPE l
 #endif
   UnityBegin("test_IMU_ICM_42670_P.c");
   run_test(test_imu_init_null_interface, "test_imu_init_null_interface", 16);
-  run_test(test_imu_init_invalid_accel_mode, "test_imu_init_invalid_accel_mode", 21);
-  run_test(test_imu_init_invalid_gyro_mode, "test_imu_init_invalid_gyro_mode", 27);
-  run_test(test_imu_config_accel_invalid_range, "test_imu_config_accel_invalid_range", 33);
-  run_test(test_imu_config_accel_invalid_freq, "test_imu_config_accel_invalid_freq", 39);
-  run_test(test_imu_read_accel_null_pointer, "test_imu_read_accel_null_pointer", 45);
-  run_test(test_imu_read_accel_data_ready, "test_imu_read_accel_data_ready", 50);
-  run_test(test_imu_read_accel_data_not_ready, "test_imu_read_accel_data_not_ready", 57);
-  run_test(test_imu_write_register, "test_imu_write_register", 64);
-  run_test(test_imu_read_register, "test_imu_read_register", 73);
+  run_test(test_imu_init_invalid_accel_mode, "test_imu_init_invalid_accel_mode", 22);
+  run_test(test_imu_init_invalid_gyro_mode, "test_imu_init_invalid_gyro_mode", 29);
+  run_test(test_imu_config_accel_invalid_range, "test_imu_config_accel_invalid_range", 36);
+  run_test(test_imu_config_accel_invalid_freq, "test_imu_config_accel_invalid_freq", 43);
+  run_test(test_imu_read_accel_null_pointer, "test_imu_read_accel_null_pointer", 50);
+  run_test(test_imu_read_accel_data_ready, "test_imu_read_accel_data_ready", 56);
+  run_test(test_imu_read_accel_data_not_ready, "test_imu_read_accel_data_not_ready", 64);
+  run_test(test_imu_write_register, "test_imu_write_register", 72);
+  run_test(test_imu_read_register, "test_imu_read_register", 81);
 
   CMock_Guts_MemFreeFinal();
   return UNITY_END();
