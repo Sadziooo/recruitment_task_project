@@ -1,0 +1,55 @@
+---
+:source:
+  :file: test/test_IMU_ICM_42670_P.c
+  :dirname: test
+  :basename: test_IMU_ICM_42670_P.c
+:successes:
+- :test: test_imu_init_null_interface
+  :line: 16
+  :message: ''
+  :unity_test_time: 0
+- :test: test_imu_init_invalid_accel_mode
+  :line: 22
+  :message: ''
+  :unity_test_time: 0
+- :test: test_imu_init_invalid_gyro_mode
+  :line: 29
+  :message: ''
+  :unity_test_time: 0
+- :test: test_imu_config_accel_invalid_range
+  :line: 36
+  :message: ''
+  :unity_test_time: 0
+- :test: test_imu_config_accel_invalid_freq
+  :line: 43
+  :message: ''
+  :unity_test_time: 0
+- :test: test_imu_read_accel_null_pointer
+  :line: 50
+  :message: ''
+  :unity_test_time: 0
+- :test: test_imu_write_register
+  :line: 72
+  :message: ''
+  :unity_test_time: 0
+- :test: test_imu_read_register
+  :line: 81
+  :message: ''
+  :unity_test_time: 0
+:failures:
+- :test: test_imu_read_accel_data_ready
+  :line: 56
+  :message: Function imu_read_accel.  Called more times than expected.
+  :unity_test_time: 0
+- :test: test_imu_read_accel_data_not_ready
+  :line: 64
+  :message: Function imu_read_accel.  Called more times than expected.
+  :unity_test_time: 0
+:ignores: []
+:counts:
+  :total: 10
+  :passed: 8
+  :failed: 2
+  :ignored: 0
+:stdout: []
+:time: 0.06275160005316138

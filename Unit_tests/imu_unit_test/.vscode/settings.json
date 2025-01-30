@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.v": "verilog",
+        "imu_icm_42670_p.h": "c"
+    }
+}
