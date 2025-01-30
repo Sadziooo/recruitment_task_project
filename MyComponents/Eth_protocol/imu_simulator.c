@@ -56,7 +56,7 @@ typedef struct __attribute__((__packed__)){
 int my_i2c_write(uint16_t dev_addr, uint16_t reg_addr, uint8_t *data, uint16_t size);
 int my_i2c_read(uint16_t dev_addr, uint16_t reg_addr, uint8_t *data, uint16_t size);
 static int udp_send_receive(i2c_frame_t *frame, size_t frame_size, uint8_t *buffer, size_t buffer_size);
-void prepare_i2c_frame(i2c_frame_t *frame, uint8_t function_code, uint16_t device_address, uint16_t register_address, uint16_t data_length, uint8_t *data);
+void prepare_i2c_frame(i2c_frame_t *frame, uint8_t function_code, uint16_t device_address, uint16_t register_address, uint8_t *data, uint16_t data_length);
 void udp_send_hello(void);
 
 // VARIABLES --------------------------------------------------------------------------------------------------------------------------------
@@ -94,19 +94,13 @@ void imu_simulator_task(void *argument) {
 
 	uint8_t recv_buffer[BUFFER_SIZE];
     const char message[] = "Hello from stm32!";
-	prepare_i2c_frame(&frame, 0x01, 0x86, 0x03, strlen(message), (uint8_t *)message);
+	prepare_i2c_frame(&frame, I2C_OP_WRITE, 0x86, 0x03, (uint8_t *)message, strlen(message));
 
     for(;;) {
-//    	if(imu_read_accel((int16_t *)&imu_data.accel_data)) {
-//            continue;
-//        }
+//		imu_read_accel((int16_t *)&imu_data.accel_data);
 //   	    osDelay(100);
-//        if(imu_read_gyro((int16_t *)&imu_data.gyro_data)) {
-//            continue;
-//        }
+//        imu_read_gyro((int16_t *)&imu_data.gyro_data);
 
-//    	udp_send_hello();
-//    	int received_bytes = udp_send_rcv(recv_buffer, BUFFER_SIZE);
     	int received_bytes = udp_send_receive(&frame, sizeof(frame.i2c_frame_header) + frame.i2c_frame_header.data_length, recv_buffer, BUFFER_SIZE);
 
         osDelay(3000);
@@ -218,7 +212,7 @@ static int udp_send_receive(i2c_frame_t *frame, size_t frame_size, uint8_t *buff
     return recv_len; // Zwracamy liczbę odebranych bajtów
 }
 
-void prepare_i2c_frame(i2c_frame_t *frame, uint8_t function_code, uint16_t device_address, uint16_t register_address, uint16_t data_length, uint8_t *data) {
+void prepare_i2c_frame(i2c_frame_t *frame, uint8_t function_code, uint16_t device_address, uint16_t register_address, uint8_t *data, uint16_t data_length) {
     frame->i2c_frame_header.function_code = function_code;
     frame->i2c_frame_header.device_address = device_address;
     frame->i2c_frame_header.register_address = register_address;
@@ -233,15 +227,12 @@ int my_i2c_read(uint16_t dev_addr, uint16_t reg_addr, uint8_t *data, uint16_t si
     }
 
     i2c_frame_t frame = {0};
-    frame.i2c_frame_header.function_code = I2C_OP_READ;
-    frame.i2c_frame_header.device_address = htons(dev_addr);
-    frame.i2c_frame_header.register_address = reg_addr;
-    frame.i2c_frame_header.data_length = htons(size);
+	prepare_i2c_frame(&frame, I2C_OP_READ, dev_addr, reg_addr, data, size);
 
     uint8_t buffer[sizeof(i2c_frame_t) + MAX_I2C_DATA_LENGTH];
 
     // Wysyłanie ramki i odbieranie odpowiedzi
-    int received = udp_send_receive(&frame, sizeof(i2c_frame_t) - sizeof(frame.data), buffer, sizeof(buffer));
+    int received = udp_send_receive(&frame, sizeof(i2c_frame_header_t) + frame.i2c_frame_header.data_length, buffer, sizeof(buffer));
     if (received < 0) {
         return -1;
     }
@@ -263,11 +254,7 @@ int my_i2c_write(uint16_t dev_addr, uint16_t reg_addr, uint8_t *data, uint16_t s
     }
 
     i2c_frame_t frame = {0};
-    frame.i2c_frame_header.function_code = I2C_OP_WRITE;
-    frame.i2c_frame_header.device_address = htons(dev_addr);
-    frame.i2c_frame_header.register_address = reg_addr;
-    frame.i2c_frame_header.data_length = htons(size);
-    memcpy(frame.data, data, size);
+	prepare_i2c_frame(&frame, I2C_OP_WRITE, dev_addr, reg_addr, data, size);
 
     // Wysyłanie ramki
     int sent = udp_send_receive(&frame, sizeof(i2c_frame_t) - sizeof(frame.data) + size, NULL, 0);
